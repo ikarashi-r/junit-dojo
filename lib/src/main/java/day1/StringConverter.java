@@ -1,5 +1,9 @@
 package day1;
 
+import java.util.Objects;
+
+import com.google.common.annotations.VisibleForTesting;
+
 public class StringConverter {
 	/**
 	 * 引数に含まれる[a-z0-9]以外の文字を置換してください
@@ -11,15 +15,29 @@ public class StringConverter {
 	 * @param name
 	 * @return @{code: "[a-z0-9_-]*"}のみを含む文字列
 	 */
-	public String sanitizeName(String name) {
-		char[] charArray = name.toCharArray();
 
+	@VisibleForTesting
+	static class Validator {
+		void validate(String name) {
+			Objects.requireNonNull(name, "文字列がnullです");
+			if (name.length() == 0) {
+				throw new IllegalArgumentException("文字列が空です");
+			}
+		}
+	}
+
+	public String sanitizeName(String name) {
+
+		Validator validator = new Validator();
+		validator.validate(name);
+
+		char[] charArray = name.toCharArray();
 		StringBuilder result = new StringBuilder();
 
 		for (int i = 0; i < charArray.length; i++) {
 			if (i > 0 && isEachCharWhiteSpaceOnPrevAndCurrIdx(charArray, i)) {
 				continue;
-			} else if (Character.isWhitespace(charArray[i])) {
+			} else if (isSpaceOrNewlineCode(charArray[i])) {
 				result.append("-");
 			} else if (Character.isLetterOrDigit(charArray[i])) {
 				result.append(Character.toLowerCase(charArray[i]));
@@ -31,7 +49,11 @@ public class StringConverter {
 	}
 
 	private boolean isEachCharWhiteSpaceOnPrevAndCurrIdx(char[] charArray, int i) {
-		return (Character.isWhitespace(charArray[i]) && Character.isWhitespace(charArray[i - 1]));
+		return (isSpaceOrNewlineCode(charArray[i]) && isSpaceOrNewlineCode(charArray[i - 1]));
+	}
+
+	private boolean isSpaceOrNewlineCode(char c) {
+		return (c == ' ' || c == '\n' || c == '\r');
 	}
 
 }

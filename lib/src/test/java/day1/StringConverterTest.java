@@ -54,11 +54,13 @@ class StringConverterTest {
 		@Test
 		void 引数が改行の場合にハイフンを返す() {
 			assertEquals("-", converter.sanitizeName("\n"));
+			assertEquals("-", converter.sanitizeName("\r"));
 		}
 
 		@Test
 		void 空白と改行が連続する場合にまとめてハイフンを返す() {
 			assertEquals("-", converter.sanitizeName(" \n"));
+			assertEquals("-", converter.sanitizeName("\r\n"));
 		}
 
 	}
